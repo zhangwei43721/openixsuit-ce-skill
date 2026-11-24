@@ -52,15 +52,18 @@ openixsuit-ai bridge-stop
 
 ## 调整分屏、互转与日志保存
 
-`log-ui get` 返回当前分屏 ID、采集与显示设置、列数和互转设置。以下命令用前一次查询得到的 `pane_id`，修改当前分屏名称和接收格式：
+`log-ui get` 返回当前分屏 ID、采集与显示设置、关键词高亮规则、日志级别着色开关、列数和互转设置。以下命令用前一次查询得到的 `pane_id`，修改当前分屏名称、接收格式和高亮规则：
 
 ```bash
 openixsuit-ai log-ui get
 openixsuit-ai log-ui pane-set - <<'JSON'
-{"pane_id":"填入分屏 ID","label":"调试串口","receive_format":"hex"}
+{"pane_id":"填入分屏 ID","label":"内核日志","receive_format":"text","highlight_rules":[{"keyword":"panic","color":"red"},{"keyword":"ready","color":"green"}],"level_colors":true}
 JSON
 ```
 
 - 活跃时可以修改分屏名称和显示设置。修改设备或线路参数前，先停止该路。对于等待恢复且还没有会话 ID 的分屏，在 `pane-set` 中传 `pane_id` 和 `"restore_on_startup":false` 取消恢复。
+- `highlight_rules` 按顺序为文本添加关键词颜色，最多 32 条；每个 `keyword` 为 1 至 128 个字符，`color` 可选 `red`、`amber`、`green`、`blue` 或 `purple`。传空数组可清除规则。`level_colors` 默认 `true`，关闭后不按日志级别着色。串口和 USB CDC 可识别 `[WARN]`、`ERROR:`、`E (123) TAG:` 等明确的级别前缀。以 `logcat` 或 `dmesg` 开头的 ADB 命令会自动识别级别：`logcat` 支持 threadtime、brief/tag 和 long 等常见格式；`dmesg` 识别 `<数字>` 优先级及 `kern :warn :` 这类解码前缀。设备支持时可用 `dmesg -w -x` 输出解码前缀。级别颜色固定为：warn 琥珀色，error/fatal 红色，info 蓝色，notice 青色，debug 灰色。
+- `log-ui highlight-set` 用 `{"highlight_rules":[{"keyword":"panic","color":"red"}]}` 更新全局列表，`log-ui get` 的 `shared_highlight_rules` 返回当前规则。留空数组可清除全局规则。全局规则用于各日志窗口的显示，同名关键词优先使用分屏规则。日志保存和触发仍由日志保存策略控制。
 - `log-ui layout-set` 支持 `columns` 和 `pane_order`。`log-ui bridge-set` 支持 `profile_id`、`first_port`、`second_port`、`format`、`direction`、`show_timestamps` 和 `auto_scroll`。修改互转两端前先停止互转。`bridge-stop` 也能取消等待中的互转恢复。
+- 具名日志配置会为串口和 ADB 来源一并保存 `highlight_rules` 与 `level_colors`。旧配置未包含这两个字段时，载入后使用空规则和开启级别着色。
 - `log-storage` 查询已生效的目录与保存策略。`log-storage-save` 接受需要修改的 JSON 字段 `save_continuous`、`keywords`、`before_lines`、`after_lines` 和 `directory`。将 `directory` 设为 `null` 可恢复默认的系统文档目录。
