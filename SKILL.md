@@ -13,7 +13,7 @@ description: 通过 OpenixSuit-CE 桌面客户端 CLI 操作和排查全志设�
 
 按当前任务读取对应说明：
 
-- 检查、解包、转换固件，或选择烧录目标与模式，读[固件与烧录](references/firmware.md)。
+- 读取板载分区、检查本地固件或选择烧录目标与模式，读[固件与烧录](references/firmware.md)。
 - 使用 ADB 命令、传输文件、采集性能指标或访问 FEL 内存，读[设备调试](references/device-debugging.md)。
 - 配置或启停串口、USB CDC、ADB 日志与串口互转，或调整分屏和保存策略，读[多路日志](references/logs.md)。
 - 保存事件规则或电源草稿、查看异常，或用 Webhook 把串口事件交给 Codex、Claude Code 等 Agent，读[事件与电源](references/automation.md)。

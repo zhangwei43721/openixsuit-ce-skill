@@ -49,6 +49,20 @@ openixsuit-ai flash "/path/to/firmware.img" \
 
 启动核验默认等 45 秒，可用 `--boot-timeout-ms` 设置。指定的核验失败或超时时，命令退出码为非零。先读 `flash.status` 判断写入是否已经完成，再读 `boot` 确定是哪项启动检查失败。没指定 `--adb-target` 或刷写后关机时，`boot.status` 为 `skipped`。
 
+## 导出设备分区
+
+从 `status` 的 `fel_devices` 取目标设备 ID，在 FES 模式下读取板上的 GPT 或全志 MBR。设备还在 FEL 时，为列表和导出命令提供 `--boot-firmware`，使用与板型匹配的 IMAGEWTY 固件在内存启动 FES。运行桌面端后执行：
+
+```bash
+openixsuit-ai partition-list --device-id bus:1-port:3
+openixsuit-ai partition-read --device-id bus:1-port:3 \
+  --table-id "$table_id" --partition boot --partition rootfsB --out-dir ./backup
+```
+
+`table_id` 取自列表结果的 `table.table_id`，可检测布局变化。重名分区用 `--partition-id` 指定 `table.partitions[].id`。导出目录须已存在。输出为 `编号-分区名.bin`，结果包含字节数及 SHA-256。若只导出了一部分，`result.files` 列出已完成的镜像，`result.error` 给出停止原因。已有同名文件会被保留。
+
+用 `openixsuit-ai partition-read-cancel` 取消当前读取。停止后，已完成的文件仍可用。客户端只发送读取命令，NAND 的实际读回与 UBI 挂载行为由板端 FES 决定。分区长度未知或地址无法确认时，客户端会提示原因。
+
 ## 烧录裸盘镜像
 
 第一个参数是与板型匹配的 IMAGEWTY 引导固件，第二个参数是要写入的整盘镜像。**`raw` 会擦除目标存储，跳过下载校验，完成后重启。**
