@@ -4,6 +4,8 @@
 
 `rules` 和 `power-profiles` 列出当前配置。`rule-save` 和 `power-profile-save` 从 JSON 文件或标准输入 `-` 保存单个草稿。规则至少填写 `id`、`name` 和 `condition.kind`，电源配置至少填写 `id`、`name` 和 `kind`，再根据控制方式填写参数。
 
+规则条件支持日志匹配以及 `device_online`、`flash_completed`。后两者可用可选 `condition.pattern` 精确筛选目标。规则调用插件时填写 `plugin_id`、`plugin_action`、`plugin_inputs`，并可用 `adb_serial` 固定设备；诊断插件运行时可读取事件上下文中的 `incident.log_tail` 和 `incident.matched_text`。
+
 返回 `draft: true` 后，可在桌面端「事件与电源」检查。CLI 可用相同 ID 更新未确认的草稿。规则由用户核对后勾选「启用」并保存。电源配置由用户核对设备、命令和断电时长，再点「确认电源配置」。
 
 ```bash

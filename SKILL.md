@@ -17,6 +17,6 @@ description: 通过 OpenixSuit-CE 桌面客户端 CLI 操作和排查全志设�
 - 使用 ADB 命令、传输文件、采集性能指标或访问 FEL 内存，读[设备调试](references/device-debugging.md)。
 - 配置或启停串口、USB CDC、ADB 日志与串口互转，或调整分屏和保存策略，读[多路日志](references/logs.md)。
 - 保存事件规则或电源草稿、查看异常，或用 Webhook 把串口事件交给 Codex、Claude Code 等 Agent，读[事件与电源](references/automation.md)。
-- 查看、安装或运行扩展，读[客户端插件](references/plugins.md)。
+- 查看、安装、运行或编写插件，读[客户端插件](references/plugins.md)。该说明包含插件清单、宿主 RPC、provider 生命周期、离线校验打包和 CLI 示例。
 
 以执行结果的 `ok` 和 `error` 判断成败。命令超时或断开时，先确认桌面端的进度与 `busy` 状态，再决定如何处理，避免重复发起设备写入。
